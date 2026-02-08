@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Results Portal</title>
+  <title>Accumulative Results Portal</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -27,8 +27,7 @@
       justify-content: center;
       color: #333;
       margin: 0;
-      /* Background Image */
-      background-image: url('background.jpg'); 
+      background-image: url('background.png'); 
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -100,7 +99,7 @@
     .result-label { color: #64748b; font-weight: 500; }
     .result-value { font-weight: 700; color: #1e293b; }
 
-    /* Grade Circle */
+    /* Grade Badge */
     .grade-badge-container { text-align: center; margin-bottom: 15px; }
     .grade-circle {
       width: 100px; height: 100px; border-radius: 50%; display: inline-flex;
@@ -109,11 +108,16 @@
     }
     .eval-text { margin-top: 10px; font-weight: 700; font-size: 1.2rem; }
 
-    /* Colors */
-    .bg-Excellent { background: linear-gradient(135deg, #10b981, #059669); }
-    .bg-Very { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-    .bg-Good { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    .bg-F { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    /* COLORS DEFINITION */
+    /* Excellent (Green) */
+    .bg-Excellent { background: linear-gradient(135deg, #10b981, #059669); } 
+    /* Very Good (Blue) */
+    .bg-Very { background: linear-gradient(135deg, #3b82f6, #2563eb); } 
+    /* Good (Orange) */
+    .bg-Good { background: linear-gradient(135deg, #f59e0b, #d97706); } 
+    /* Fail (Red) */
+    .bg-F { background: linear-gradient(135deg, #ef4444, #dc2626); } 
+    /* Default (Grey) */
     .bg-Default { background: linear-gradient(135deg, #6c757d, #495057); }
 
     .loader {
@@ -134,7 +138,7 @@
     <div class="card-header">
       <div class="icon-header"><i class="fas fa-university"></i></div>
       <h2>Student Results</h2>
-      <p class="text-muted small">Faculty of Medicine - AFM</p>
+      <p class="text-muted small">Class of 2029 - Accumulative</p>
     </div>
 
     <div class="card-body">
@@ -153,6 +157,7 @@
       </div>
 
       <div id="resultArea" class="result-container">
+        
         <div class="grade-badge-container">
           <div id="gradeCircle" class="grade-circle bg-Default">-</div>
           <div class="eval-text" id="resEval">-</div>
@@ -168,24 +173,24 @@
           <span class="result-value" id="resRank">#</span>
         </div>
         <div class="result-item">
-          <span class="result-label">Total Score</span>
+          <span class="result-label">Accumulative Total</span>
           <span class="result-value" id="resTotal">0</span>
         </div>
         <div class="result-item">
-          <span class="result-label">Percentage</span>
+          <span class="result-label">Accumulative %</span>
           <span class="result-value" id="resPercent">0%</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div style="margin-top:20px; color:white; font-size:0.8rem;">&copy; 2026 OAFM Results Portal</div>
+  <div style="margin-top:20px; color:white; font-size:0.8rem;">&copy; Made By Omar Aboolo, Class of 2030</div>
 
   <script>
     // ============================================
     // ⚠️ PASTE YOUR GOOGLE DEPLOYMENT URL HERE ⚠️
     // ============================================
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydAUM1mn7OKrydMQK8c95mbSSt_IgKVKZeeI79dgkdGmLLbTraZ5gA2F-WwXaoXJSZ/exec"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvh5UhBTjkKkYjPZMJIqTDCeoKH9ERiiltf4PxOX7DADnInRbN7yhVGBwM9nfQja66/exec"; 
 
     function searchResult() {
       const seatRaw = document.getElementById('seatInput').value;
@@ -213,7 +218,7 @@
           document.getElementById('loader').style.display = 'none';
 
           if (data.found) {
-            // Update Text
+            // Update Text Data
             document.getElementById('resName').innerText = data.name;
             document.getElementById('resSeat').innerText = "Seat: " + data.seat;
             document.getElementById('resRank').innerText = "#" + data.rank;
@@ -221,21 +226,35 @@
             document.getElementById('resPercent').innerText = data.percent;
             document.getElementById('resEval').innerText = data.evaluation;
 
-            // Visual Logic
-            const evalText = data.evaluation || "";
+            // ====================================================
+            // COLOR LOGIC (Based on Calculated Grade)
+            // ====================================================
+            const evalText = data.evaluation ? data.evaluation.trim() : "";
+            
             let gradeClass = 'bg-Default';
-            let circleText = evalText.charAt(0);
+            let circleText = "-";
 
-            if (evalText.includes("Excellent") || evalText.includes("امتياز")) {
-                gradeClass = "bg-Excellent"; circleText = "Ex";
-            } else if (evalText.includes("Very Good") || evalText.includes("جيد جدا")) {
-                gradeClass = "bg-Very"; circleText = "Vg";
-            } else if (evalText.includes("Good") || evalText.includes("جيد")) {
-                gradeClass = "bg-Good"; circleText = "Gd";
-            } else if (evalText.includes("F") || evalText.includes("Fail")) {
-                gradeClass = "bg-F"; circleText = "F";
+            if (evalText === "Excellent") {
+                gradeClass = "bg-Excellent"; 
+                circleText = "A";
+            } 
+            else if (evalText === "Very Good") {
+                gradeClass = "bg-Very"; 
+                circleText = "B";
+            } 
+            else if (evalText === "Good") {
+                gradeClass = "bg-Good"; 
+                circleText = "C";
+            } 
+            else if (evalText === "Fail") {
+                gradeClass = "bg-F"; 
+                circleText = "F";
+            } else if (evalText === "Pass") {
+                gradeClass = "bg-Default"; // Grey for Pass (just 60%+)
+                circleText = "D";
             }
 
+            // Apply Class to Circle
             const circle = document.getElementById('gradeCircle');
             circle.innerText = circleText;
             circle.className = 'grade-circle ' + gradeClass;
@@ -263,4 +282,3 @@
 
 </body>
 </html>
-
